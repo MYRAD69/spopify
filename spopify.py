@@ -28,8 +28,13 @@ file_exists_action = ""
 console = Console()
 def main(user_url):
     url = validate_url(f"{user_url}".strip())
+    if url == "Invalid Spotify track URL":
+        return url
     if "track" in url:
-        songs = [get_track_info(url)]
+        song = get_track_info(url)
+        if song == "Invalid Spotify track URL":
+            return song
+        songs = [song]
     elif "playlist" in url:
         songs = get_playlist_info(url)
 
@@ -68,20 +73,28 @@ def main(user_url):
 
 
 def validate_url(sp_url):
-    if re.search(r"^(https?://)?open\.spotify\.com/(playlist|track)/.+$", sp_url):
-        return sp_url
+    try:
+        if re.search(r"^(https?://)?open\.spotify\.com/(playlist|track)/.+$", sp_url):
+            return sp_url
 
-    raise ValueError("Invalid Spotify URL")
+        raise ValueError("Invalid Spotify URL")
+    except:
+        return "Invalid Spotify track URL"
 
 
 def get_track_info(track_url):
     headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36'}
-    res = requests.get(track_url, headers=headers)
-    if res.status_code != 200:
-        raise ValueError("Invalid Spotify track URL")
-
-    track = sp.track(track_url)
-
+    try:
+        res = requests.get(track_url, headers=headers)
+        if res.status_code != 200:
+            raise ValueError("Invalid Spotify track URL")
+    except:
+        return "Invalid Spotify track URL"
+    try:
+        track = sp.track(track_url)
+    except:
+        return "Invalid Spotify track URL"
+    print("LOOOOOOOOOOOOOOOOOOOOOOOOOOOL")
     track_metadata = {
         "artist_name": track["artists"][0]["name"],
         "track_title": track["name"],
@@ -219,10 +232,13 @@ def exp(message):
         bot.send_message(message.chat.id, '<i>Invalid link</i>', parse_mode='html')
     else:
         msg = main(message.text)
-        bot.send_message(message.chat.id, f"{msg}", parse_mode='html')
-        audio = open(f"./music/{msg}", 'rb')
-        bot.send_audio(message.chat.id, audio)
-        audio.close()
-        os.remove(f"./music/{msg}")
+        if msg == "Invalid Spotify track URL":
+            bot.send_message(message.chat.id, '<i>Invalid link</i>', parse_mode='html')
+        else:
+            bot.send_message(message.chat.id, f"{msg}", parse_mode='html')
+            audio = open(f"./music/{msg}", 'rb')
+            bot.send_audio(message.chat.id, audio)
+            audio.close()
+            os.remove(f"./music/{msg}")
 
 bot.polling(none_stop=True)
