@@ -215,11 +215,14 @@ def start(message):
 
 @bot.message_handler()
 def exp(message):
-    msg = main(message.text)
-    bot.send_message(message.chat.id, f"{msg}", parse_mode='html')
-    audio = open(f"./music/{msg}", 'rb')
-    bot.send_audio(message.chat.id, audio)
-    audio.close()
-    os.remove(f"./music/{msg}")
+    if message.text.find('open.spotify.com') == -1:
+        bot.send_message(message.chat.id, '<i>Invalid link</i>', parse_mode='html')
+    else:
+        msg = main(message.text)
+        bot.send_message(message.chat.id, f"{msg}", parse_mode='html')
+        audio = open(f"./music/{msg}", 'rb')
+        bot.send_audio(message.chat.id, audio)
+        audio.close()
+        os.remove(f"./music/{msg}")
 
 bot.polling(none_stop=True)
