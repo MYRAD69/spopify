@@ -94,7 +94,6 @@ def get_track_info(track_url):
         track = sp.track(track_url)
     except:
         return "Invalid Spotify track URL"
-    print("LOOOOOOOOOOOOOOOOOOOOOOOOOOOL")
     track_metadata = {
         "artist_name": track["artists"][0]["name"],
         "track_title": track["name"],
