@@ -1,0 +1,7 @@
+pyTelegramBotAPI
+moviepy
+mutagen
+pytube
+requests
+rich
+spotipy
