@@ -149,7 +149,7 @@ def find_youtube(query):
         except:
             count += 1
     else:
-        raise ValueError("Please check your internet connection and try again later.")
+        return "Invalid Spotify track URL"
 
     search_results = re.findall(r"watch\?v=(\S{11})", response.read().decode())
     first_vid = "https://www.youtube.com/watch?v=" + search_results[0]
